@@ -14,7 +14,9 @@ import dsp
 
 settings = dsp.settings
 
+Cohere = dsp.Cohere
 OpenAI = dsp.GPT3
 ColBERTv2 = dsp.ColBERTv2
+ElasticSearch = dsp.ElasticSearch
 HFClientTGI = dsp.HFClientTGI
 ChatModuleClient = ChatModuleClient
