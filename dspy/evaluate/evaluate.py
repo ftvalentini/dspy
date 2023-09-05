@@ -66,7 +66,8 @@ class Evaluate:
         pbar.set_description(f"Average Metric: {ncorrect} / {ntotal}  ({round(100 * ncorrect / ntotal, 1)})")
         pbar.update()
 
-    def __call__(self, program, metric=None, devset=None, num_threads=None, display_progress=None, display_table=None, display=None):
+    def __call__(self, program, metric=None, devset=None, num_threads=None, display_progress=None, display_table=None, display=None, 
+                 return_df=False):
         metric = metric if metric is not None else self.metric
         devset = devset if devset is not None else self.devset
         num_threads = num_threads if num_threads is not None else self.num_threads
@@ -147,8 +148,10 @@ class Evaluate:
                 """
                 ipython_display(HTML(message))
                 
-
-        return round(100 * ncorrect / ntotal, 2)
+        score = round(100 * ncorrect / ntotal, 2)
+        if return_df:
+            return score, df
+        return score
 
 
 def merge_dicts(d1, d2):
