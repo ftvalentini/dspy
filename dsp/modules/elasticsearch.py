@@ -13,7 +13,9 @@ except ImportError as e:
 
 # TODO ideally we should import from elasticsearch lib instead of FLARE
 # This will work only in my project, not in yours!
-from scripts.FLARE.src.retriever import BM25
+import sys
+sys.path.append("scripts")
+from FLARE.src.retriever import BM25
 
 
 class ElasticSearch:
