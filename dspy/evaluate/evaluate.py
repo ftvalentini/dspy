@@ -116,6 +116,7 @@ class Evaluate:
         df = pd.DataFrame(data)
 
         # Truncate every cell in the DataFrame
+        df_not_truncated = df.copy()
         df = df.applymap(truncate_cell)
 
         # Rename the 'correct' column to the name of the metric function
@@ -150,7 +151,7 @@ class Evaluate:
                 
         score = round(100 * ncorrect / ntotal, 2)
         if return_df:
-            return score, df
+            return score, df_not_truncated
         return score
 
 

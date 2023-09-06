@@ -40,7 +40,7 @@ class LM(ABC):
         last_prompt = None
         printed = []
 
-        for x in reversed(self.history[-100:]):
+        for x in reversed(self.history):
             prompt = x["prompt"]
 
             if prompt != last_prompt:
