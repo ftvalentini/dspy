@@ -57,12 +57,12 @@ def format_elastic_result(
         ids: np.ndarray, titles: np.ndarray, texts: np.ndarray) -> list[dict]:
     """Format ElasticSearch result to format expected by dspy framework
     NOTE we add IDs just in case
-    NOTE we format text as "title | text"
+    NOTE we already formatted chunks as "title | text" when creating index
     """
     ids = ids.flatten().tolist()
     titles = titles.flatten().tolist()
     texts = texts.flatten().tolist()
     results = []
     for id, title, text in zip(ids, titles, texts):
-        results.append({"id": id, "title": title, "text": f"{title} | {text}"})
+        results.append({"id": id, "title": title, "text": text})
     return results
