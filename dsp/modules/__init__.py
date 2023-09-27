@@ -6,5 +6,6 @@ from .elasticsearch import ElasticSearch
 from .sentence_vectorizer import *
 from .cohere import *
 from .sbert import *
+from .pyserini import *
 
 from .hf_client import HFClientTGI

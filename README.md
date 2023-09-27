@@ -9,7 +9,7 @@
 [<img align="center" src="https://colab.research.google.com/assets/colab-badge.svg" />](https://colab.research.google.com/github/stanfordnlp/dspy/blob/main/intro.ipynb)
 
 
-**DSPy** is the framework for solving advanced tasks with language models (LMs) and retrieval models (RMs). **DSPy** unifies techniques for **prompting** and **fine-tuning** LMs as well as improving them with **reasoning** and **tool/retrieval augmentation**, all expressed through a _minimalistic set of Pythonic modules that compose and learn_.
+**DSPy** is the framework for solving advanced tasks with language models (LMs) and retrieval models (RMs). **DSPy** unifies techniques for **prompting** and **fine-tuning** LMs — and approaches for **reasoning** and **augmentation with retrieval and tools**. All of these are expressed through modules that compose and learn.
 
 To make this possible:
 
@@ -60,7 +60,7 @@ Or open our intro notebook in Google Colab: [<img align="center" src="https://co
 
 ## 2) Syntax: You're in charge of the workflow—it's free-form Python code!
 
-**DSPy** hides tedious prompt engineering, but it exposes the important decisions you need to take: **[1]** what's your system design going to look like? **[2]** what are the important constraints on the behavior of your program?
+**DSPy** hides tedious prompt engineering, but it cleanly exposes the important decisions you need to make: **[1]** what's your system design going to look like? **[2]** what are the important constraints on the behavior of your program?
 
 You express your system as free-form Pythonic modules. **DSPy** will tune the quality of your program _in whatever way_ you use foundation models: you can code with loops, `if` statements, or exceptions, and use **DSPy** modules within any Python control flow you think works for your task.
 
@@ -140,7 +140,7 @@ class GenerateSearchQuery(dspy.Signature):
 self.generate_answer = dspy.ChainOfThought(GenerateSearchQuery)
 ```
 
-You can optionally provide a `prefix` and/or `desc` key for each input or output field to refine or constraint the behavior of modules using your signature.
+You can optionally provide a `prefix` and/or `desc` key for each input or output field to refine or constraint the behavior of modules using your signature. The description of the sub-task itself is specified as the docstring (i.e., `"""Write a simple..."""`).
 
 
 #### 3.b) Asking **DSPy** to automatically optimize your program with `dspy.teleprompt.*`
@@ -234,20 +234,22 @@ Or open it directly in free Google Colab: [<img align="center" src="https://cola
 
 ###
 <details>
-  <summary><h3 style="display: inline">Module Reference [coming soon]</h3></summary>
+  <summary><h3 style="display: inline">Module Reference</h3></summary>
+
+We have work-in-progress module documentation at [this PR](https://github.com/stanfordnlp/dspy/pull/93). Please let us know if anything there is unclear.
 
 
 #### Language Model Clients
 
-- `dspy.OpenAI`
-- `dspy.Cohere`
-- `dspy.TGI`
-- `dspy.VLLM`
+- [`dspy.OpenAI`](docs/language_models_client.md#openai)
+- [`dspy.Cohere`](docs/language_models_client.md#cohere)
+- [`dspy.TGI`](docs/language_models_client.md#tgi)
+- [`dspy.VLLM`](docs/language_models_client.md#vllm)
 
 #### Retrieval Model Clients
 
-- `dspy.ColBERTv2`
-- `dspy.AzureCognitiveSearch`
+- [`dspy.ColBERTv2`](docs/retrieval_models_client.md#colbertv2)
+- [`dspy.AzureCognitiveSearch`](docs/retrieval_models_client.md#azurecognitivesearch)
 
 
 #### Signatures
@@ -258,10 +260,12 @@ Or open it directly in free Google Colab: [<img align="center" src="https://cola
 
 #### Modules
 
-- `dspy.Predict`
-- `dspy.Retrieve`
-- `dspy.ChainOfThought`
-- `dspy.SelfConsistency` [use functional `dspy.majority` now]
+- [`dspy.Predict`](docs/modules.md#dspypredict)
+- [`dspy.Retrieve`](docs/modules.md#dspyretrieve)
+- [`dspy.ChainOfThought`](docs/modules.md#dspychainofthought)
+- `dspy.majority` (functional self-consistency)
+- `dspy.ProgramOfThought` [[see open PR]](https://github.com/stanfordnlp/dspy/pull/116)
+- `dspy.ReAct` [see open PR]
 - `dspy.MultiChainReasoning` [coming soon]
 - `dspy.SelfCritique` [coming soon]
 - `dspy.SelfRevision` [coming soon]
@@ -269,10 +273,13 @@ Or open it directly in free Google Colab: [<img align="center" src="https://cola
   
 #### Teleprompters
 
-- `dspy.teleprompt.LabeledFewShot`
-- `dspy.teleprompt.BootstrapFewShot`
-- `dspy.teleprompt.BootstrapFewShotWithRandomSearch`
-- `dspy.teleprompt.BootstrapFinetune`
+- [`dspy.teleprompt.LabeledFewShot`](docs/teleprompters.md#telepromptlabeledfewshot)
+- [`dspy.teleprompt.BootstrapFewShot`](docs/teleprompters.md#telepromptbootstrapfewshot)
+- [`dspy.teleprompt.BootstrapFewShotWithRandomSearch`](docs/teleprompters.md#telepromptbootstrapfewshotwithrandomsearch)
+- `dspy.teleprompt.LabeledFinetune` [coming soon]
+- [`dspy.teleprompt.BootstrapFinetune`](docs/teleprompters.md#telepromptbootstrapfinetune)
+- `dspy.teleprompt.Ensemble` [coming soon]
+- `dspy.teleprompt.kNN` [coming soon]
 
 </details>
 
@@ -287,7 +294,7 @@ If you're a NLP/AI researcher (or a practitioner exploring new pipelines or new 
 
 ####
 <details>
-  <summary><h4 style="display: inline">[5.a] DSPy vs. thin wrappers around prompts (OpenAI API, MiniChain, basic templating, etc.)</h4></summary>
+  <summary><h4 style="display: inline">[5.a] DSPy vs. thin wrappers for prompts (OpenAI API, MiniChain, basic templating)</h4></summary>
 
 In other words: _Why can't I just write my prompts directly as string templates?_ Well, for extremely simple settings, this _might_ work just fine. (If you're familiar with neural networks, this is like expressing a tiny two-layer NN as a Python for-loop. It kinda works.)
 
@@ -307,11 +314,11 @@ Oh, and you wouldn't need to maintain long, brittle, model-specific strings at t
 > _Note: If you use LangChain as a thin wrapper around your own prompt strings, refer to answer [5.a] instead._
 
 
-LangChain and LlamaIndex are popular libraries that target high-level application development with LMs. They offer many _batteries-included_, pre-built application modules that plug in with your data or configuration. In practice, many usecases genuinely _don't need_ any special components indeed. If you'd be happy to use someone's generic, off-the-shelf prompt for question answering over PDFs or standard text-to-SQL as long as it's easy to set up on your data, then you will probably find a very rich ecosystem in these libraries.
+LangChain and LlamaIndex are popular libraries that target high-level application development with LMs. They offer many _batteries-included_, pre-built application modules that plug in with your data or configuration. In practice, indeed, many usecases genuinely _don't need_ any special components. If you'd be happy to use someone's generic, off-the-shelf prompt for question answering over PDFs or standard text-to-SQL as long as it's easy to set up on your data, then you will probably find a very rich ecosystem in these libraries.
 
 Unlike these libraries, **DSPy** doesn't internally contain hand-crafted prompts that target specific applications you can build. Instead, **DSPy** introduces a very small set of much more powerful and general-purpose modules _that can learn to prompt (or finetune) your LM within your pipeline on your data_.
 
-**DSPy** offers a whole different degree of modularity: when you change your data, make tweaks to your program's control flow, or change your target LM, the **DSPy compiler** can map your program into a new set of prompts (or finetunes) that are optimized specifically for this pipeline. Because of this, you may find that **DSPy** obtains the highest quality for your task, with the least effort, provided you're willing to implement (or extend) your own short program.
+**DSPy** offers a whole different degree of modularity: when you change your data, make tweaks to your program's control flow, or change your target LM, the **DSPy compiler** can map your program into a new set of prompts (or finetunes) that are optimized specifically for this pipeline. Because of this, you may find that **DSPy** obtains the highest quality for your task, with the least effort, provided you're willing to implement (or extend) your own short program. In short, **DSPy** is for when you need a lightweight but automatically-optimizing programming model — not a library of predefined prompts and integrations.
 
 If you're familiar with neural networks:
 > This is like the difference between PyTorch (i.e., representing **DSPy**) and HuggingFace Transformers (i.e., representing the higher-level libraries). If you simply want to use off-the-shelf `BERT-base-uncased` or `GPT2-large` or apply minimal finetuning to them, HF Transformers makes it very straightforward. If, however, you're looking to build your own architecture (or extend an existing one significantly), you have to quickly drop down into something much more modular like PyTorch. Luckily, HF Transformers _is_ implemented in backends like PyTorch. We are similarly excited about high-level wrapper around **DSPy** for common applications. If this is implemented using **DSPy**, your high-level application can also adapt significantly to your data in a way that static prompt chains won't. Please [open an issue](https://github.com/stanfordnlp/dspy/issues/new) if this is something you want to help with.
@@ -320,10 +327,10 @@ If you're familiar with neural networks:
 
 ####
 <details>
-  <summary><h4 style="display: inline">[5.c] DSPy vs. generation control libraries like Guidance, LLMQL, RELM, Outlines</h4></summary>
+  <summary><h4 style="display: inline">[5.c] DSPy vs. generation control libraries like Guidance, LMQL, RELM, Outlines</h4></summary>
 
 
-Guidance, LLMQL, RELM, and Outlines are all exciting new libraries for controlling the individual completions of LMs, e.g., if you want to enforce JSON output schema or constrain sampling to a particular regular expression.
+Guidance, LMQL, RELM, and Outlines are all exciting new libraries for controlling the individual completions of LMs, e.g., if you want to enforce JSON output schema or constrain sampling to a particular regular expression.
 
 This is very useful in many settings, but it's generally focused on low-level, structured control of a single LM call. It doesn't help ensure the JSON (or structured output) you get is going to be correct or useful for your task.
 
@@ -337,12 +344,11 @@ In contrast, **DSPy** automatically optimizes the prompts in your programs to al
 
 **DSPy** is led by **Omar Khattab** at Stanford NLP with **Chris Potts** and **Matei Zaharia**.
 
-Key contributors and team members include **Arnav Singhvi**, **Paridhi Maheshwari**, **Keshav Santhanam**, **Sri Vardhamanan**, **Eric Zhang**, **Hanna Moazam**, and **Thomas Joshi**.
+Key contributors and team members include **Arnav Singhvi**, **Paridhi Maheshwari**, **Keshav Santhanam**, **Sri Vardhamanan**, **Eric Zhang**, **Hanna Moazam**, **Thomas Joshi**, **Saiful Haq**, and **Ashutosh Sharma**.
 
 **DSPy** includes important contributions from **Rick Battle** and **Igor Kotenkov**. It reflects discussions with **Lisa Li**, **David Hall**, **Ashwin Paranjape**, **Heather Miller**, **Chris Manning**, **Percy Liang**, and many others.
 
-
-
+The **DSPy** logo is designed by **Chuyi Zhang**.
 
 
 ## 📜 Citation & Reading More
@@ -360,7 +366,10 @@ If you use DSPy (or DSPv1) in a research paper, please cite our work as follows:
 }
 ```
 
-You can also read more about the old v1 of our framework (Demonstrate–Search–Predict, or DSP):
+
+You can also read more about the evolution of the framework from Demonstrate-Search-Predict (DSP v1) to DSPy:
 * [**Demonstrate-Search-Predict: Composing retrieval and language models for knowledge-intensive NLP**](https://arxiv.org/abs/2212.14024.pdf) (Academic Paper, Dec 2022)
 * [**Introducing DSP**](https://twitter.com/lateinteraction/status/1617953413576425472)  (Twitter Thread, Jan 2023)
-* Thread [**Releasing the DSP Compiler (v0.1)**](https://twitter.com/lateinteraction/status/1625231662849073160)  (Twitter Thread, Feb 2023)
+* [**Releasing the DSP Compiler (v0.1)**](https://twitter.com/lateinteraction/status/1625231662849073160)  (Twitter Thread, Feb 2023)
+* [**Releasing DSPy, the latest iteration of the framework**](https://twitter.com/lateinteraction/status/1694748401374490946) (Twitter Thread, Aug 2023)
+

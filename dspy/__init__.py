@@ -17,6 +17,7 @@ settings = dsp.settings
 Cohere = dsp.Cohere
 OpenAI = dsp.GPT3
 ColBERTv2 = dsp.ColBERTv2
+Pyserini = dsp.PyseriniRetriever
 ElasticSearch = dsp.ElasticSearch
 HFClientTGI = dsp.HFClientTGI
 ChatModuleClient = ChatModuleClient
