@@ -57,7 +57,7 @@ class PyseriniRetriever:
         for rank, hit in enumerate(hits, start=1):
             if self.dataset is not None:
                 row = self.dataset_id_to_index[hit.docid]
-                text = ' '.join(self.dataset[field][row] for field in self.text_fields)
+                text = ' | '.join(self.dataset[field][row] for field in self.text_fields)
                 pid = self.dataset[self.id_field][row]
             else:
                 # Pyserini prebuilt faiss indexes can perform docid lookup
