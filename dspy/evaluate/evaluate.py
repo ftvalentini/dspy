@@ -119,13 +119,13 @@ class Evaluate:
 
         df = pd.DataFrame(data)
 
-        # Truncate every cell in the DataFrame
-        df_not_truncated = df.copy()
-        df = df.applymap(truncate_cell)
-
         # Rename the 'correct' column to the name of the metric function
         metric_name = metric.__name__
         df.rename(columns={'correct': metric_name}, inplace=True)
+
+        # Truncate every cell in the DataFrame
+        df_not_truncated = df.copy()
+        df = df.applymap(truncate_cell)
 
         if display_table:
             if isinstance(display_table, int):
@@ -157,8 +157,8 @@ class Evaluate:
         scores = [score for *_, score in predicted_devset]
         if return_df:
             if return_all_scores:
-                return score, scores, df
-            return score, df
+                return score, scores, df_not_truncated
+            return score, df_not_truncated
         if return_all_scores:
             return score, scores
         return score
