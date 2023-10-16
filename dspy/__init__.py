@@ -21,3 +21,4 @@ Pyserini = dsp.PyseriniRetriever
 ElasticSearch = dsp.ElasticSearch
 HFClientTGI = dsp.HFClientTGI
 ChatModuleClient = ChatModuleClient
+HFModel = dsp.HFModel
