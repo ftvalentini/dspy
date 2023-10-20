@@ -4,6 +4,13 @@ from datasets import Dataset
 
 from dsp.utils import dotdict
 
+try:
+    from nltk.translate.chrf_score import sentence_chrf
+except ImportError:
+    raise ModuleNotFoundError(
+        "You need to install nltk to use the remove_similar_passages function."
+    )
+
 
 class PyseriniRetriever:
     """Wrapper for retrieval with Pyserini. Supports using either pyserini prebuilt faiss indexes or your own faiss index."""
@@ -49,9 +56,12 @@ class PyseriniRetriever:
                 
 
     def __call__(
-        self, query: str, k: int = 10, threads: int = 16,
+        self, query: str, k: int = 10, threads: int = 16, remove_similar: bool = False
     ) -> Union[list[str], list[dotdict]]:
-        hits = self.searcher.search(query, k=k, threads=threads)
+        # NOTE FV: we retrieve 2*k passages, then apply chrF filter (remove very
+        # similar passages), hoping to get at least k passages (a bit dirty)
+
+        hits = self.searcher.search(query, k=k*2, threads=threads)
         
         topk = []
         for rank, hit in enumerate(hits, start=1):
@@ -62,9 +72,17 @@ class PyseriniRetriever:
             else:
                 # Pyserini prebuilt faiss indexes can perform docid lookup
                 psg = json.loads(self.searcher.doc(hit.docid).raw())
-                text = ' '.join(psg[field] for field in self.text_fields)
+                text = ' | '.join(psg[field] for field in self.text_fields)
                 pid = psg[self.id_field]
             
+            if remove_similar:
+                text_wout_title = text.split(" | ")[1]
+                current_texts = [psg['long_text'].split(" | ")[1] for psg in topk if 'long_text' in psg]
+                is_similar = any(are_passages_similar(text_wout_title, txt) for txt in current_texts)
+                if is_similar:
+                    print("Removing a very similar passage")
+                    continue
+
             topk.append({
                 'text': text,
                 'long_text': text,
@@ -72,5 +90,19 @@ class PyseriniRetriever:
                 'score': hit.score,
                 'rank': rank,
             })
+
+            if len(topk) == k:
+                break
         
         return [dotdict(psg) for psg in topk]
+
+
+def are_passages_similar(psg1: str, psg2: str, threshold: float = 0.95) -> bool:
+    # NOTE chrF score works for any retriever
+    # NOTE we dont use tf-idf because we need the idf of the whole corpus, not just the retrieved passages
+    # TODO for pyserini, try to use return_vector arg from pyserini/search/faiss/_searcher.py#L442
+    #   a) then, use cosine similarity to filter out similar passages
+    #   b) would this work if we use the bm25 implementation of pyserini? or can we make
+    #      it work with our BM25 implementation?
+    score = sentence_chrf(psg1, psg2)
+    return score > threshold

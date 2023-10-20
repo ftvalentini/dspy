@@ -10,9 +10,11 @@ class Retrieve(Parameter):
     input_variable = "query"
     desc = "takes a search query and returns one or more potentially relevant passages from a corpus"
 
-    def __init__(self, k=3):
+    def __init__(self, k=3, remove_similar=False):
         self.stage = random.randbytes(8).hex()
         self.k = k
+        self.remove_similar = remove_similar
+        # FV TODO put the remove_similar arg in forward() instead of here?
     
     def reset(self):
         pass
@@ -36,7 +38,7 @@ class Retrieve(Parameter):
         # print(queries)
         # TODO: Consider removing any quote-like markers that surround the query too.
 
-        passages = dsp.retrieveEnsemble(queries, k=self.k)
+        passages = dsp.retrieveEnsemble(queries, k=self.k, remove_similar=self.remove_similar)
         return Prediction(passages=passages)
     
 
